@@ -3,23 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_item_list">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="cpp.cs4750.rssfeedreader.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/nav_item_list"
+        android:name="cpp.cs4750.rssfeedreader.ui.item.ItemListFragment"
+        android:label="@string/menu_item_list"
+        tools:layout="@layout/fragment_item_list" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="cpp.cs4750.rssfeedreader.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_feed_list"
+        android:name="cpp.cs4750.rssfeedreader.ui.feed.FeedListFragment"
+        android:label="@string/menu_feed_list"
+        tools:layout="@layout/fragment_feed_list" />
 
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="cpp.cs4750.rssfeedreader.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
 </navigation>
