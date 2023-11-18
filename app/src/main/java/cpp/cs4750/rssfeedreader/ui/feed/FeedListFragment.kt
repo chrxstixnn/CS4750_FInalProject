@@ -42,7 +42,7 @@ class FeedListFragment : Fragment() {
         val recyclerView = binding.rssFeedRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        recyclerViewAdapter = FeedListAdapter()
+        recyclerViewAdapter = FeedListAdapter(requireContext())
         recyclerView.adapter = recyclerViewAdapter
 
         viewModel.rssFeed.observe(viewLifecycleOwner, Observer { rssFeed ->
@@ -50,6 +50,6 @@ class FeedListFragment : Fragment() {
         })
 
         // Replace "your_feed_url" with the actual RSS feed URL you want to parse
-        viewModel.fetchRssFeed("https://feeds.feedburner.com/AndroidCentral")
+        viewModel.fetchRssFeed("https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml")
     }
 }

@@ -1,5 +1,8 @@
 package cpp.cs4750.rssfeedreader.ui.feed
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import cpp.cs4750.rssfeedreader.R
 import cpp.cs4750.rssfeedreader.data.RSSItem
 
-class FeedListAdapter : ListAdapter<RSSItem, FeedListAdapter.RSSViewHolder>(RSSDiffCallback()) {
+class FeedListAdapter(private val context: Context) :
+    ListAdapter<RSSItem, FeedListAdapter.RSSViewHolder>(RSSDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RSSViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -21,6 +25,9 @@ class FeedListAdapter : ListAdapter<RSSItem, FeedListAdapter.RSSViewHolder>(RSSD
     override fun onBindViewHolder(holder: RSSViewHolder, position: Int) {
         val rssItem = getItem(position)
         holder.bind(rssItem)
+        holder.itemView.setOnClickListener {
+            openInAppBrowser(context, rssItem.link)
+        }
     }
 
     class RSSViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,6 +47,14 @@ class FeedListAdapter : ListAdapter<RSSItem, FeedListAdapter.RSSViewHolder>(RSSD
 
         override fun areContentsTheSame(oldItem: RSSItem, newItem: RSSItem): Boolean {
             return oldItem == newItem
+        }
+    }
+
+    private fun openInAppBrowser(context: Context, url: String?) {
+        if (!url.isNullOrBlank()) {
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra(WebViewActivity.EXTRA_URL, url)
+            context.startActivity(intent)
         }
     }
 }
