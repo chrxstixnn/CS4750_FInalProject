@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cpp.cs4750.rssfeedreader.model.Item
-import com.prof.rssparser.Parser
+import com.prof18.rssparser.RssParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -16,15 +16,15 @@ class FeedListViewModel : ViewModel() {
 
     fun fetchRssFeed(rssFeedUrl: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            val parser = Parser.Builder().build()
+            val parser = RssParser()
             try {
-                val rssFeed = parser.getChannel(rssFeedUrl)
-                val rssItems = rssFeed.articles.map { article ->
+                val rssFeed = parser.getRssChannel(rssFeedUrl)
+                val rssItems = rssFeed.items.map {
                     Item(
-                        title = article.title,
-                        description = article.description,
-                        link = article.link,
-                        pubDate = article.pubDate
+                        title = it.title,
+                        description = it.description,
+                        link = it.link,
+                        pubDate = it.pubDate
                     )
                 }
 
