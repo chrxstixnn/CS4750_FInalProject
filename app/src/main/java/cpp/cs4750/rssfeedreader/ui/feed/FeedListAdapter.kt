@@ -2,7 +2,6 @@ package cpp.cs4750.rssfeedreader.ui.feed
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +10,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import cpp.cs4750.rssfeedreader.R
-import cpp.cs4750.rssfeedreader.data.RSSItem
+import cpp.cs4750.rssfeedreader.model.Item
 
 class FeedListAdapter(private val context: Context) :
-    ListAdapter<RSSItem, FeedListAdapter.RSSViewHolder>(RSSDiffCallback()) {
+    ListAdapter<Item, FeedListAdapter.RSSViewHolder>(RSSDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RSSViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -34,18 +33,18 @@ class FeedListAdapter(private val context: Context) :
         private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         private val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
 
-        fun bind(rssItem: RSSItem) {
+        fun bind(rssItem: Item) {
             titleTextView.text = rssItem.title
             descriptionTextView.text = rssItem.description
         }
     }
 
-    private class RSSDiffCallback : DiffUtil.ItemCallback<RSSItem>() {
-        override fun areItemsTheSame(oldItem: RSSItem, newItem: RSSItem): Boolean {
+    private class RSSDiffCallback : DiffUtil.ItemCallback<Item>() {
+        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.link == newItem.link
         }
 
-        override fun areContentsTheSame(oldItem: RSSItem, newItem: RSSItem): Boolean {
+        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem == newItem
         }
     }
