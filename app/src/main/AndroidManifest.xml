@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.feed.WebViewActivity"
+            android:name=".ui.item.WebViewActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.RSSFeedReader"/>
     </application>

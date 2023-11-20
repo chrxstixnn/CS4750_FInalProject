@@ -1,8 +1,7 @@
-package cpp.cs4750.rssfeedreader.ui.feed
+package cpp.cs4750.rssfeedreader.ui.item
 
 import android.os.Bundle
 import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
