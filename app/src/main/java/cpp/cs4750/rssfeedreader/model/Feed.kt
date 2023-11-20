@@ -6,8 +6,8 @@ import java.util.UUID
 
 @Entity
 data class Feed(
-    @PrimaryKey val id: UUID,
     val title: String?,
     val description: String?,
-    val link: String?
+    val link: String?,
+    @PrimaryKey val id: UUID = UUID.randomUUID()
 )

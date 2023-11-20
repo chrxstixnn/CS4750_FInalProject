@@ -6,10 +6,10 @@ import java.util.UUID
 
 @Entity
 data class Item(
-    @PrimaryKey val id: UUID,
     val title: String?,
     val author: String?,
     val description: String?,
     val link: String?,
-    val pubDate: String?
+    val pubDate: String?,
+    @PrimaryKey val id: UUID = UUID.randomUUID()
 )

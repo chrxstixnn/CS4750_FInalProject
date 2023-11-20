@@ -22,6 +22,7 @@ class FeedListViewModel : ViewModel() {
                 val rssItems = rssFeed.items.map {
                     Item(
                         title = it.title,
+                        author = it.author,
                         description = it.description,
                         link = it.link,
                         pubDate = it.pubDate
