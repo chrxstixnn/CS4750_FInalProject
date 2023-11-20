@@ -28,5 +28,4 @@ class FeedListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
