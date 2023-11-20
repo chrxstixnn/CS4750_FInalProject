@@ -2,7 +2,10 @@ package cpp.cs4750.rssfeedreader.repository
 
 import android.content.Context
 import androidx.room.Room
+import com.prof18.rssparser.RssParser
+import cpp.cs4750.rssfeedreader.database.FeedDao
 import cpp.cs4750.rssfeedreader.database.FeedDatabase
+import cpp.cs4750.rssfeedreader.database.ItemDao
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
@@ -24,12 +27,16 @@ class FeedRepository private constructor(
             DATABASE_NAME
         )
         .build()
+    private val feedDao: FeedDao = database.feedDao()
+    private val itemDao: ItemDao = database.itemDao()
 
-    suspend fun fetchItems(): List<Item> {
+    private val parser: RssParser = RssParser()
+
+    suspend fun fetchItems(): Flow<List<Item>> {
         TODO("Fetch items from all feed urls and add to database")
     }
 
-    suspend fun fetchNewItems(): List<Item> {
+    suspend fun fetchNewItems(): Flow<List<Item>> {
         TODO("Fetch new items")
     }
 
