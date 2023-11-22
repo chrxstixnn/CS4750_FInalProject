@@ -12,4 +12,10 @@ data class Item(
     val link: String?,
     val pubDate: String?,
     @PrimaryKey val id: UUID = UUID.randomUUID()
-)
+) {
+    override fun equals(other: Any?): Boolean = (other as? Item)?.let {
+        this.title.equals(it.title) &&
+        this.author.equals(it.author) &&
+        this.pubDate.equals(it.pubDate)
+    } ?: false
+}
