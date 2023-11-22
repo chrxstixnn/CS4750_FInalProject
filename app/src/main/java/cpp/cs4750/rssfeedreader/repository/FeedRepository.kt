@@ -40,12 +40,12 @@ class FeedRepository private constructor(
 
     suspend fun fetchItems(): Flow<List<Item>> {
         fetchNewItems()
-        return itemDao.getItems()
+        return getItems()
     }
     
-    suspend fun fetchNewItems(): Flow<List<Item>> = flow {
-        val feeds = feedDao.getFeeds().first()
-        val existingItems = itemDao.getItems().first()
+    suspend fun fetchNewItems(): List<Item> {
+        val feeds = getFeeds().first()
+        val existingItems = getItems().first()
         val newItems = mutableListOf<Item>()
 
         // TODO more efficient algorithm
@@ -57,7 +57,7 @@ class FeedRepository private constructor(
             newItems.addAll(fetchedNewItems)
         }
 
-        emit(newItems.toList())
+        return newItems.toList()
     }
 
     private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
@@ -81,6 +81,8 @@ class FeedRepository private constructor(
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
 
     suspend fun updateFeed(feed: Feed) = feedDao.updateFeed(feed)
+
+    suspend fun deleteFeed(feed: Feed) = feedDao.deleteFeed(feed)
 
     companion object {
         private var INSTANCE: FeedRepository? = null

@@ -1,6 +1,7 @@
 package cpp.cs4750.rssfeedreader.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -21,4 +22,7 @@ interface FeedDao {
 
     @Insert
     suspend fun addFeed(feed: Feed)
+
+    @Delete
+    suspend fun deleteFeed(feed: Feed)
 }
