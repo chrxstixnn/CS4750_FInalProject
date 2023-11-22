@@ -1,5 +1,7 @@
 package cpp.cs4750.rssfeedreader
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
@@ -42,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    companion object{
+        fun newIntent(context: Context): Intent {
+            return Intent(context,MainActivity::class.java)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

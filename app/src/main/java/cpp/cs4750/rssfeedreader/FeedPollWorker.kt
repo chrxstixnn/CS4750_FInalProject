@@ -7,6 +7,7 @@ class FeedPollWorker {
 
     private fun notifyReader(){
 
+
         
     }
 }
