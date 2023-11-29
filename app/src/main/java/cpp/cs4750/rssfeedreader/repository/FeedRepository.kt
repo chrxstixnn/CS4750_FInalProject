@@ -11,12 +11,7 @@ import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.forEach
 import java.lang.IllegalStateException
 
 private const val DATABASE_NAME = "feed-database"
@@ -57,19 +52,23 @@ class FeedRepository private constructor(
             newItems.addAll(fetchedNewItems)
         }
 
-        return newItems.toList()
+        val immutableNewItems = newItems.toList()
+
+        itemDao.addItems(immutableNewItems)
+
+        return immutableNewItems
     }
 
     private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
         val channel = parser.getRssChannel(it)
 
-        channel.items.map {
+        channel.items.map {item ->
             Item(
-                it.title,
-                it.author,
-                it.description,
-                it.link,
-                it.pubDate
+                item.title,
+                item.author,
+                item.description,
+                item.link,
+                item.pubDate
             )
         }
     } ?: emptyList()
