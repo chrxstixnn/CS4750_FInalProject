@@ -8,6 +8,7 @@ import android.content.Context
 import android.provider.Settings.Global.getString
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import cpp.cs4750.rssfeedreader.repository.FeedRepository
 
 
 const val NOTIFICATION_CHANNEL_ID = "rss_poll"
