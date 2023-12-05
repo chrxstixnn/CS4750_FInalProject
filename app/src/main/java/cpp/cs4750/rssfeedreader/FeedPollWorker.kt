@@ -22,6 +22,7 @@ class FeedPollWorker (
 
         val query = preferencesRepository.storedQuery.first()
         val lastFeed = preferencesRepository.lastFeedId.first()
+        notifyReader()
 
         if(query.isEmpty()){
             return Result.success()
