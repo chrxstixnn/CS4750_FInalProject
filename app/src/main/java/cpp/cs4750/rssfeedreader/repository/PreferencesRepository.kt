@@ -26,23 +26,23 @@ class PreferencesRepository private constructor(
         }
     }
 
-    val lastResultId: Flow<String> = dataStore.data.map{
+    val lastFeedId: Flow<String> = dataStore.data.map{
         it[LAST_ARTICLE] ?: ""
     }.distinctUntilChanged()
 
-    suspend fun setLastResultId(lastResultId: String){
+    suspend fun setLastResultId(lastFeedId: String){
         dataStore.edit{
-            it[LAST_ARTICLE] = lastResultId
+            it[LAST_ARTICLE] = lastFeedId
         }
     }
 
-    val isPolling: Flow<Boolean> = dataStore.data.map{
+    val polling: Flow<Boolean> = dataStore.data.map{
         it[POLLING] ?: false
     }.distinctUntilChanged()
 
-    suspend fun setPolling(isPolling: Boolean){
+    suspend fun setPolling(polling: Boolean){
         dataStore.edit {
-            it[POLLING] = isPolling
+            it[POLLING] = polling
         }
     }
 

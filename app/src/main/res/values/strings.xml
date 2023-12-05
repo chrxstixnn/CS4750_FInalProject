@@ -10,4 +10,7 @@
     <string name="menu_item_list">Items</string>
     <string name="menu_feed_list">Feeds</string>
     <string name="notification_channel_name">Notification</string>
+    <String name="new_feeds">New feeds</String>
+    <string name="poll">poll</string>
+    <string name="stop_poll">Stop poll</string>
 </resources>

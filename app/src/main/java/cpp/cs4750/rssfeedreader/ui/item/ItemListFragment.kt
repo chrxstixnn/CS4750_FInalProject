@@ -8,6 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import cpp.cs4750.rssfeedreader.FeedPollWorker
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
 
 class ItemListFragment : Fragment() {
@@ -27,6 +32,16 @@ class ItemListFragment : Fragment() {
     ): View? {
         _binding = FragmentItemListBinding.inflate(inflater, container, false)
         return binding.root
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .build()
+        val workRequest = OneTimeWorkRequest
+            .Builder(FeedPollWorker::class.java)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(requireContext())
+            .enqueue(workRequest)
     }
 
     override fun onDestroyView() {

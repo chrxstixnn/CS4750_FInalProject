@@ -1,24 +1,36 @@
 package cpp.cs4750.rssfeedreader
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import okhttp3.internal.notify
+import cpp.cs4750.rssfeedreader.repository.FeedRepository
+import cpp.cs4750.rssfeedreader.repository.PreferencesRepository
+import kotlinx.coroutines.flow.first
 
 class FeedPollWorker (
     private val context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
     override suspend fun doWork(): Result {
-        TODO("Not yet implemented")
+        val preferencesRepository = PreferencesRepository.get()
+        val feedRepository = FeedRepository
+
+
+        val query = preferencesRepository.storedQuery.first()
+        val lastFeed = preferencesRepository.lastFeedId.first()
+
+        if(query.isEmpty()){
+            return Result.success()
+        }
+
+
+
+
+        return Result.success()
     }
 
 
