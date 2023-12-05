@@ -17,7 +17,7 @@ class FeedPollWorker (
 ) : CoroutineWorker(context, workerParameters) {
     override suspend fun doWork(): Result {
         val preferencesRepository = PreferencesRepository.get()
-        val feedRepository = FeedRepository
+        val feedRepository = FeedRepository.get()
 
 
         val query = preferencesRepository.storedQuery.first()
@@ -26,7 +26,6 @@ class FeedPollWorker (
         if(query.isEmpty()){
             return Result.success()
         }
-
 
 
 
