@@ -5,14 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class ItemListFragment : Fragment() {
-    private lateinit var viewModel: ItemListViewModel
-    private lateinit var recyclerViewAdapter: ItemListAdapter
 
     private var _binding: FragmentItemListBinding? = null
     private val binding
@@ -20,12 +24,15 @@ class ItemListFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
+    private val itemListViewModel: ItemListViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentItemListBinding.inflate(inflater, container, false)
+        binding.itemRecyclerView.layoutManager = LinearLayoutManager(context)
         return binding.root
     }
 
@@ -37,19 +44,14 @@ class ItemListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ItemListViewModel::class.java]
-
-        val recyclerView = binding.rssFeedRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        recyclerViewAdapter = ItemListAdapter(requireContext())
-        recyclerView.adapter = recyclerViewAdapter
-
-        viewModel.rssFeed.observe(viewLifecycleOwner, Observer { rssFeed ->
-            recyclerViewAdapter.submitList(rssFeed)
-        })
-
-        // Replace "your_feed_url" with the actual RSS feed URL you want to parse
-        viewModel.fetchRssFeed("https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                itemListViewModel.items.collect { items ->
+                    binding.itemRecyclerView.adapter = ItemListAdapter(items) {
+                        // TODO implement onClickItem function
+                    }
+                }
+            }
+        }
     }
 }

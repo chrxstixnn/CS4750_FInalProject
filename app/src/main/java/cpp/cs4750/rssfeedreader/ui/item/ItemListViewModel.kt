@@ -3,37 +3,31 @@ package cpp.cs4750.rssfeedreader.ui.item
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cpp.cs4750.rssfeedreader.model.Item
 import com.prof18.rssparser.RssParser
+import cpp.cs4750.rssfeedreader.repository.FeedRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ItemListViewModel : ViewModel() {
-    private val _rssFeed = MutableLiveData<List<Item>>()
-    val rssFeed: LiveData<List<Item>> get() = _rssFeed
 
-    fun fetchRssFeed(rssFeedUrl: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val parser = RssParser()
-            try {
-                val rssFeed = parser.getRssChannel(rssFeedUrl)
-                val rssItems = rssFeed.items.map {
-                    Item(
-                        title = it.title,
-                        author = it.author,
-                        description = it.description,
-                        link = it.link,
-                        pubDate = it.pubDate
-                    )
-                }
+    private val feedRepository = FeedRepository.get()
 
-                withContext(Dispatchers.Main) {
-                    _rssFeed.value = rssItems
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+    private val _items: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
+    val items: StateFlow<List<Item>>
+        get() = _items.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            feedRepository.fetchItems().collect {
+                _items.value = it
             }
         }
     }
