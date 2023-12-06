@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
+import androidx.navigation.fragment.navArgs
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemDetailsBinding
 
 class ItemDetailsFragment : Fragment() {
@@ -14,6 +17,12 @@ class ItemDetailsFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
+    private val args: ItemDetailsFragmentArgs by navArgs()
+
+    private val itemDetailsViewModel: ItemDetailsViewModel by viewModels {
+        ItemDetailsViewModelFactory(args.itemId)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -21,6 +30,21 @@ class ItemDetailsFragment : Fragment() {
     ): View? {
         _binding = FragmentItemDetailsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        itemDetailsViewModel.item.asLiveData().observe(viewLifecycleOwner) { item ->
+            item?.let {
+                binding.apply {
+                    itemDetailTitle.text = it.title
+                    itemDetailAuthor.text = it.author
+                    itemDetailPublish.text = it.pubDate
+                    itemDetailContent.text = it.content
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
