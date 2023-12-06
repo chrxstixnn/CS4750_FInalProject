@@ -1,6 +1,7 @@
 package cpp.cs4750.rssfeedreader.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.prof18.rssparser.RssParser
 import cpp.cs4750.rssfeedreader.database.FeedDao
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import java.lang.IllegalStateException
 
 private const val DATABASE_NAME = "feed-database"
+private const val TAG = "FeedRepository"
 
 class FeedRepository private constructor(
     context: Context,
@@ -46,21 +48,32 @@ class FeedRepository private constructor(
         // TODO more efficient algorithm
         for (feed in feeds) {
             val fetchedItems = fetchItemsFromFeed(feed)
-            val fetchedNewItems = existingItems.filter {
-                fetchedItems.contains(it)
+
+            if (existingItems.isEmpty()) {
+                newItems.addAll(fetchedItems)
+                continue
             }
-            newItems.addAll(fetchedNewItems)
+
+            newItems.addAll(
+                existingItems.filter {
+                    !fetchedItems.contains(it)
+                }
+            )
         }
 
         val immutableNewItems = newItems.toList()
 
         itemDao.addItems(immutableNewItems)
 
+        Log.d(TAG, "Fetched ${immutableNewItems.size} new items")
+
         return immutableNewItems
     }
 
     private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
         val channel = parser.getRssChannel(it)
+
+        Log.d(TAG, "Fetched ${channel.items.size} items from $it")
 
         channel.items.map {item ->
             Item(
@@ -73,9 +86,15 @@ class FeedRepository private constructor(
         }
     } ?: emptyList()
 
-    fun getItems(): Flow<List<Item>> = itemDao.getItems()
+    fun getItems(): Flow<List<Item>> {
+        Log.d(TAG, "Retrieving items from database")
+        return itemDao.getItems()
+    }
 
-    fun getFeeds(): Flow<List<Feed>> = feedDao.getFeeds()
+    fun getFeeds(): Flow<List<Feed>> {
+        Log.d(TAG, "Retrieving feeds from database")
+        return feedDao.getFeeds()
+    }
 
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
 
