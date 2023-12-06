@@ -4,15 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import cpp.cs4750.rssfeedreader.FeedPollWorker
+import cpp.cs4750.rssfeedreader.R
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
 
 class ItemListFragment : Fragment() {
     private lateinit var viewModel: ItemListViewModel
     private lateinit var recyclerViewAdapter: ItemListAdapter
+    private var pollingToggleButton: ToggleButton? = null
 
     private var _binding: FragmentItemListBinding? = null
     private val binding
@@ -32,6 +40,7 @@ class ItemListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        pollingToggleButton = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,8 +51,24 @@ class ItemListFragment : Fragment() {
         val recyclerView = binding.rssFeedRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .build()
+
+        val workRequest = OneTimeWorkRequest
+            .Builder(FeedPollWorker::class.java)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(requireContext())
+            .enqueue(workRequest)
+
         recyclerViewAdapter = ItemListAdapter(requireContext())
         recyclerView.adapter = recyclerViewAdapter
+
+        pollingToggleButton = view.findViewById<ToggleButton>(R.id.menu_item_toggle_polling)
+
 
         viewModel.rssFeed.observe(viewLifecycleOwner, Observer { rssFeed ->
             recyclerViewAdapter.submitList(rssFeed)
@@ -51,5 +76,8 @@ class ItemListFragment : Fragment() {
 
         // Replace "your_feed_url" with the actual RSS feed URL you want to parse
         viewModel.fetchRssFeed("https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml")
+
+
+
     }
 }
