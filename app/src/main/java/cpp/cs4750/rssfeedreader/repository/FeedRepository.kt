@@ -7,6 +7,7 @@ import com.prof18.rssparser.RssParser
 import cpp.cs4750.rssfeedreader.database.FeedDao
 import cpp.cs4750.rssfeedreader.database.FeedDatabase
 import cpp.cs4750.rssfeedreader.database.ItemDao
+import cpp.cs4750.rssfeedreader.database.migration_1_2
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.lang.IllegalStateException
+import java.util.UUID
 
 private const val DATABASE_NAME = "feed-database"
 private const val TAG = "FeedRepository"
@@ -29,6 +31,7 @@ class FeedRepository private constructor(
             FeedDatabase::class.java,
             DATABASE_NAME
         )
+        .addMigrations(migration_1_2)
         .build()
     private val feedDao: FeedDao = database.feedDao()
     private val itemDao: ItemDao = database.itemDao()
@@ -77,14 +80,17 @@ class FeedRepository private constructor(
 
         channel.items.map {item ->
             Item(
-                item.title,
-                item.author,
-                item.description,
-                item.link,
-                item.pubDate
+                item.title ?: "",
+                item.author ?: "",
+                item.description ?: "",
+                item.link ?: "",
+                item.pubDate ?: "",
+                item.content ?: ""
             )
         }
     } ?: emptyList()
+
+    suspend fun getItem(id: UUID): Item = itemDao.getItem(id)
 
     fun getItems(): Flow<List<Item>> {
         Log.d(TAG, "Retrieving items from database")
