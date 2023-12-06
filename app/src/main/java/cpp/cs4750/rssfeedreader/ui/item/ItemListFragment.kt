@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
 import kotlinx.coroutines.flow.collect
@@ -48,7 +49,9 @@ class ItemListFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 itemListViewModel.items.collect { items ->
                     binding.itemRecyclerView.adapter = ItemListAdapter(items) {
-                        // TODO implement onClickItem function
+                        findNavController().navigate(
+                            ItemListFragmentDirections.showItemDetails(it)
+                        )
                     }
                 }
             }

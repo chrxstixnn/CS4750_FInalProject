@@ -26,7 +26,7 @@ class ItemListAdapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item)   // TODO add openInAppBrowser then transition to FeedDetailsFragment
+        holder.bind(item, onItemClicked)
     }
 
     override fun getItemCount() = items.size
@@ -44,8 +44,12 @@ class ItemListAdapter(
 class ItemViewHolder(
     private val binding: ListRssItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(rssItem: Item) {
+    fun bind(rssItem: Item, onItemClicked: (itemId: UUID) -> Unit) {
         binding.itemTitle.text = rssItem.title
         binding.itemDescription.text = rssItem.description
+
+        binding.root.setOnClickListener {
+            onItemClicked(rssItem.id)
+        }
     }
 }
