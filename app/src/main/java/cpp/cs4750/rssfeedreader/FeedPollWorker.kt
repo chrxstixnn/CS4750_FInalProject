@@ -7,6 +7,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import cpp.cs4750.rssfeedreader.repository.FeedRepository
+import cpp.cs4750.rssfeedreader.repository.PreferencesRepository
+import kotlinx.coroutines.flow.first
 
 class FeedPollWorker (
     private val context: Context,
@@ -14,8 +17,37 @@ class FeedPollWorker (
     ): CoroutineWorker(context, workerParameters){
 
     override suspend fun doWork(): Result {
-        sendNotification()
-        return Result.success()
+        val preferencesRepository = PreferencesRepository.get()
+        val feedRepository = FeedRepository(context)
+
+
+        val query = preferencesRepository.storedQuery.first()
+        val last = preferencesRepository.lastResult.first()
+
+        if(query.isEmpty()) {
+
+            sendNotification()
+            return Result.success()
+        }
+
+        return try{
+
+            val feeds = feedRepository.getFeeds()
+
+            if(feeds != null){
+                val newLast = feeds.first().toString()
+
+                if(newLast == (last)){
+                    //nothing
+                }else{
+                    preferencesRepository.setLast(newLast.toString())
+                }
+            }
+            Result.success()
+        } catch(ex: Exception){
+            Result.failure()
+        }
+
     }
 
     @SuppressLint("MissingPermission")

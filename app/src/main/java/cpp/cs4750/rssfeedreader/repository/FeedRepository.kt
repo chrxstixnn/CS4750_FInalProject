@@ -12,11 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import java.lang.IllegalStateException
 
 private const val DATABASE_NAME = "feed-database"
 
-class FeedRepository private constructor(
+class FeedRepository(
     context: Context,
     private val coroutineScope: CoroutineScope = GlobalScope
 ){
