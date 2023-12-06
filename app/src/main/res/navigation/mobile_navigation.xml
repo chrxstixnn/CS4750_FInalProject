@@ -24,7 +24,7 @@
     <fragment
         android:id="@+id/itemDetailsFragment"
         android:name="cpp.cs4750.rssfeedreader.ui.item.ItemDetailsFragment"
-        android:label="ItemDetailsFragment">
+        android:label="@string/menu_item_detail">
 
         <argument
             android:name="itemId"

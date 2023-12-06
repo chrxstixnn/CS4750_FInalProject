@@ -9,5 +9,9 @@
 
     <string name="menu_item_list">Items</string>
     <string name="menu_feed_list">Feeds</string>
+
+    <string name="menu_item_detail">Item</string>
+    <string name="menu_feed_detail">Feed</string>
+
     <string name="notification_channel_name">Notification</string>
 </resources>
