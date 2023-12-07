@@ -12,7 +12,6 @@ data class Item(
     val link: String,
     val pubDate: String,
     val content: String,
-    val read: Boolean,
     @PrimaryKey val id: UUID = UUID.randomUUID()
 ) {
     override fun equals(other: Any?): Boolean = (other as? Item)?.let {
