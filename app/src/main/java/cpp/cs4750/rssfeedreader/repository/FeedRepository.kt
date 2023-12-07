@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.room.Room
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.RssParserBuilder
+import com.prof18.rssparser.model.RssItem
 import cpp.cs4750.rssfeedreader.database.FeedDao
 import cpp.cs4750.rssfeedreader.database.FeedDatabase
 import cpp.cs4750.rssfeedreader.database.ItemDao
@@ -97,18 +98,20 @@ class FeedRepository private constructor (
 
         Log.d(TAG, "Fetched ${channel.items.size} items from $it")
 
-        channel.items.map {item ->
-            Item(
-                item.title ?: "",
-                item.author ?: "",
-                item.description ?: "",
-                item.link ?: "",
-                runCatching { item.pubDate?.toDate() }.getOrNull() ?: Date(),
-                item.content ?: "",
-                false
-            )
-        }
+        convertToDataModelItems(channel.items)
     } ?: emptyList()
+
+    private fun convertToDataModelItems(rssItems: List<RssItem>) : List<Item> = rssItems.map { item ->
+        Item(
+            item.title ?: "",
+            item.author ?: "",
+            item.description ?: "",
+            item.link ?: "",
+            runCatching { item.pubDate?.toDate() }.getOrNull() ?: Date(),
+            item.content ?: "",
+            false
+        )
+    }
 
     suspend fun getItem(id: UUID): Item = itemDao.getItem(id)
 
@@ -133,8 +136,8 @@ class FeedRepository private constructor (
             link
         )
 
+        itemDao.addItems(convertToDataModelItems(channel.items))
         addFeed(feed)
-        fetchNewItems()
     }
 
     suspend fun updateFeed(feed: Feed) = feedDao.updateFeed(feed)
