@@ -4,13 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.RssParserBuilder
 import cpp.cs4750.rssfeedreader.database.FeedDao
 import cpp.cs4750.rssfeedreader.database.FeedDatabase
 import cpp.cs4750.rssfeedreader.database.ItemDao
 import cpp.cs4750.rssfeedreader.database.migration_1_2
 import cpp.cs4750.rssfeedreader.database.migration_2_3
+import cpp.cs4750.rssfeedreader.database.migration_3_4
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
+import cpp.cs4750.rssfeedreader.model.toDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -19,7 +22,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import java.lang.IllegalStateException
+import java.util.Date
 import java.util.UUID
 
 private const val DATABASE_NAME = "feed-database"
@@ -35,12 +41,16 @@ class FeedRepository private constructor (
             FeedDatabase::class.java,
             DATABASE_NAME
         )
-        .addMigrations(migration_1_2, migration_2_3)
+        .addMigrations(migration_1_2, migration_2_3, migration_3_4)
         .build()
     private val feedDao: FeedDao = database.feedDao()
     private val itemDao: ItemDao = database.itemDao()
 
-    private val parser: RssParser = RssParser()
+    private val parser: RssParser = RssParserBuilder(
+        callFactory = OkHttpClient.Builder()
+            .protocols(listOf(Protocol.HTTP_1_1, Protocol.HTTP_2))
+            .build()
+    ).build()
 
     private val fetchItemsMutex = Mutex()
 
@@ -93,7 +103,7 @@ class FeedRepository private constructor (
                 item.author ?: "",
                 item.description ?: "",
                 item.link ?: "",
-                item.pubDate ?: "",
+                runCatching { item.pubDate?.toDate() }.getOrNull() ?: Date(),
                 item.content ?: "",
                 false
             )

@@ -11,7 +11,7 @@ import java.util.UUID
 
 @Dao
 interface ItemDao {
-    @Query("SELECT * FROM item")
+    @Query("SELECT * FROM item ORDER BY pubDate DESC")
     fun getItems(): Flow<List<Item>>
 
     @Query("SELECT * FROM item WHERE id=(:id)")

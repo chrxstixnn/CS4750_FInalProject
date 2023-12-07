@@ -11,6 +11,9 @@ import androidx.navigation.fragment.navArgs
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemDetailsBinding
 import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
+import java.time.Duration
+import java.time.Instant
+import java.util.Date
 
 class ItemDetailsFragment : Fragment() {
     private var _binding: FragmentItemDetailsBinding? = null
@@ -42,13 +45,37 @@ class ItemDetailsFragment : Fragment() {
                 binding.apply {
                     itemDetailTitle.text = it.title
                     itemDetailAuthor.text = it.author
-                    itemDetailPublish.text = it.pubDate
+                    itemDetailPublish.text = toRelativeDateString(it.pubDate)
 
                     val sanitizedContent = Jsoup.clean(it.content, Safelist.basicWithImages())
 
                     itemDetailContent.loadData(sanitizedContent, "text/html", "UTF-8")
                 }
             }
+        }
+    }
+
+    private fun toRelativeDateString(date: Date) : String {
+        val differenceMillis = Date().time - date.time
+
+        val minutes = differenceMillis / 1000 / 60
+        val hours = differenceMillis / 1000 / 60 / 60
+        val days = differenceMillis / 1000 / 60 / 60 / 24
+        val weeks = differenceMillis / 1000 / 60 / 60 / 24 / 7
+        val months = differenceMillis / 1000 / 60 / 60 / 24 / 30
+
+        if (minutes < 60) {
+            return "$minutes minutes ago"
+        } else if (hours < 24) {
+            return "$hours hours ago"
+        } else if (days < 7) {
+            return "$days days ago"
+        } else if (days < 30) {
+            return "$weeks weeks ago"
+        } else if (days < 365) {
+            return "$months months ago"
+        } else {
+            return "${days / 365} years ago"
         }
     }
 
