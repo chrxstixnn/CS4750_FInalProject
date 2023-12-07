@@ -1,4 +1,7 @@
 package cpp.cs4750.rssfeedreader.ui.feed
 
-class FeedListViewModel {
+import androidx.lifecycle.ViewModel
+class FeedListViewModel : ViewModel() {
+
+
 }

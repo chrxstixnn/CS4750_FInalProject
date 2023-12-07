@@ -12,11 +12,13 @@ import cpp.cs4750.rssfeedreader.database.migration_2_3
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.lang.IllegalStateException
 import java.util.UUID
 
@@ -47,7 +49,7 @@ class FeedRepository private constructor (
         fetchNewItems()
         return getItems()
     }
-    
+
     suspend fun fetchNewItems(): List<Item> = fetchItemsMutex.withLock {
         val feeds = getFeeds().first()
         val existingItems = getItems().first()
@@ -81,7 +83,7 @@ class FeedRepository private constructor (
         return immutableNewItems
     }
 
-    private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
+    suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
         val channel = parser.getRssChannel(it)
 
         Log.d(TAG, "Fetched ${channel.items.size} items from $it")
@@ -110,6 +112,8 @@ class FeedRepository private constructor (
         Log.d(TAG, "Retrieving feeds from database")
         return feedDao.getFeeds()
     }
+
+    suspend fun addItems(items: List<Item>) = itemDao.addItems(items)
 
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
 
