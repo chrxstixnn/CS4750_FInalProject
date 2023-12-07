@@ -20,7 +20,7 @@ import java.util.UUID
 private const val DATABASE_NAME = "feed-database"
 private const val TAG = "FeedRepository"
 
-class FeedRepository(
+class FeedRepository private constructor (
     context: Context,
     private val coroutineScope: CoroutineScope = GlobalScope
 ){

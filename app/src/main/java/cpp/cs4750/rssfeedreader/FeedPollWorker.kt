@@ -17,7 +17,7 @@ class FeedPollWorker (
     override suspend fun doWork(): Result {
         // TODO polling preference
         // val preferencesRepository = PreferencesRepository.get()
-        val feedRepository = FeedRepository(context)
+        val feedRepository = FeedRepository.get()
 
         val newFeeds = feedRepository.fetchNewItems()
 
