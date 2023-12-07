@@ -11,6 +11,7 @@ import cpp.cs4750.rssfeedreader.R
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
 import cpp.cs4750.rssfeedreader.databinding.ListRssItemBinding
 import cpp.cs4750.rssfeedreader.model.Item
+import org.jsoup.Jsoup
 import java.util.UUID
 
 class ItemListAdapter(
@@ -37,7 +38,7 @@ class ItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(rssItem: Item, onItemClicked: (itemId: UUID) -> Unit) {
         binding.itemTitle.text = rssItem.title
-        binding.itemDescription.text = rssItem.description
+        binding.itemDescription.text = Jsoup.parse(rssItem.description).text()
 
         binding.root.setOnClickListener {
             onItemClicked(rssItem.id)
