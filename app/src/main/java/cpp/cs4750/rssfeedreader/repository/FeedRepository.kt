@@ -8,6 +8,7 @@ import cpp.cs4750.rssfeedreader.database.FeedDao
 import cpp.cs4750.rssfeedreader.database.FeedDatabase
 import cpp.cs4750.rssfeedreader.database.ItemDao
 import cpp.cs4750.rssfeedreader.database.migration_1_2
+import cpp.cs4750.rssfeedreader.database.migration_2_3
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +34,7 @@ class FeedRepository private constructor (
             FeedDatabase::class.java,
             DATABASE_NAME
         )
-        .addMigrations(migration_1_2)
+        .addMigrations(migration_1_2, migration_2_3)
         .build()
     private val feedDao: FeedDao = database.feedDao()
     private val itemDao: ItemDao = database.itemDao()
@@ -92,7 +93,8 @@ class FeedRepository private constructor (
                 item.description ?: "",
                 item.link ?: "",
                 item.pubDate ?: "",
-                item.content ?: ""
+                item.content ?: "",
+                false
             )
         }
     } ?: emptyList()

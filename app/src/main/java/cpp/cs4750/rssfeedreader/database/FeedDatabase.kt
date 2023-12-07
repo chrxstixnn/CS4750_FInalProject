@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 
-@Database(entities = [ Feed::class, Item::class ], version = 2)
+@Database(entities = [ Feed::class, Item::class ], version = 3)
 // @TypeConverters(FeedTypeConverter::class)
 abstract class FeedDatabase : RoomDatabase() {
     abstract fun feedDao(): FeedDao
@@ -22,5 +22,11 @@ val migration_1_2 = object : Migration(1, 2) {
         db.execSQL("DROP TABLE Item")
         db.execSQL("ALTER TABLE Item_temp RENAME TO Item")
         db.execSQL("ALTER TABLE Item ADD COLUMN content TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+val migration_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE Item ADD COLUMN read INTEGER NOT NULL DEFAULT 1")
     }
 }
