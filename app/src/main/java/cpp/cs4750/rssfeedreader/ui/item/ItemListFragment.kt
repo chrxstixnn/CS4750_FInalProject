@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
@@ -27,8 +26,6 @@ import cpp.cs4750.rssfeedreader.databinding.FragmentItemListBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-
-const val POLL_WORK = "feed_poll_work"
 
 class ItemListFragment : Fragment() {
 
@@ -79,11 +76,7 @@ class ItemListFragment : Fragment() {
             .build()
 
         WorkManager.getInstance(requireContext())
-            .enqueueUniquePeriodicWork(
-                POLL_WORK,
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-            )
+            .enqueue(workRequest)
     }
 
 }
