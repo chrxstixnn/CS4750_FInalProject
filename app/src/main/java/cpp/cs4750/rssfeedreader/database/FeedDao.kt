@@ -25,8 +25,4 @@ interface FeedDao {
 
     @Delete
     suspend fun deleteFeed(feed: Feed)
-
-    @Query("DELETE FROM feed")
-    suspend fun deleteAllFeeds()
-
 }
