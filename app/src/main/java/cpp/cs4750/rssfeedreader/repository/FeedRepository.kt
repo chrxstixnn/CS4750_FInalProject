@@ -26,8 +26,7 @@ private const val DATABASE_NAME = "feed-database"
 private const val TAG = "FeedRepository"
 
 class FeedRepository private constructor (
-    context: Context,
-    private val coroutineScope: CoroutineScope = GlobalScope
+    context: Context
 ){
 
     private val database: FeedDatabase = Room
@@ -83,7 +82,7 @@ class FeedRepository private constructor (
         return immutableNewItems
     }
 
-    suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
+    private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
         val channel = parser.getRssChannel(it)
 
         Log.d(TAG, "Fetched ${channel.items.size} items from $it")
@@ -113,9 +112,20 @@ class FeedRepository private constructor (
         return feedDao.getFeeds()
     }
 
-    suspend fun addItems(items: List<Item>) = itemDao.addItems(items)
-
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
+
+    suspend fun addFeed(link: String) {
+        val channel = parser.getRssChannel(link)
+
+        val feed = Feed(
+            channel.title ?: "",
+            channel.description ?: "",
+            link
+        )
+
+        addFeed(feed)
+        fetchNewItems()
+    }
 
     suspend fun updateFeed(feed: Feed) = feedDao.updateFeed(feed)
 

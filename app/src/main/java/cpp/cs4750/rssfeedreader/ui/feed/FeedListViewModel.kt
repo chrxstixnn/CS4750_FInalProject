@@ -35,14 +35,6 @@ class FeedListViewModel : ViewModel() {
         feedRepository.addFeed(feed)
     }
 
-    suspend fun addItems(items: List<Item>) {
-        feedRepository.addItems(items)
-    }
-
-    suspend fun fetchItemsFromFeed(feed: Feed): List<Item> {
-        return feedRepository.fetchItemsFromFeed(feed)
-    }
-
     suspend fun deleteFeed(feed: Feed) {
         feedRepository.deleteFeed(feed)
     }
