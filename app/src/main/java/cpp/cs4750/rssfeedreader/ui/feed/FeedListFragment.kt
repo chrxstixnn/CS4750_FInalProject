@@ -48,7 +48,6 @@ class FeedListFragment : Fragment() {
                     binding.rssFeedRecyclerView.adapter = FeedListAdapter(feeds,
                         onDeleteClick = { feed -> onDeleteFeed(feed) }
                     )
-                    binding.rssFeedRecyclerView.adapter?.notifyDataSetChanged()
                 }
             }
         }
@@ -57,8 +56,7 @@ class FeedListFragment : Fragment() {
             val url = binding.urlEditText.text.toString().trim()
             viewLifecycleOwner.lifecycleScope.launch {
                 if (url.isNotEmpty()) {
-                    val newFeed = Feed(title = null, description = null, link = url)
-                    feedListViewModel.addFeed(newFeed)
+                    feedListViewModel.addFeed(url)
                     binding.urlEditText.text.clear()
                 }
             }

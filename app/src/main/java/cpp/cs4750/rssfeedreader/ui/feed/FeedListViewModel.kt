@@ -31,8 +31,8 @@ class FeedListViewModel : ViewModel() {
         }
     }
 
-    suspend fun addFeed(feed: Feed) {
-        feedRepository.addFeed(feed)
+    suspend fun addFeed(link: String) {
+        feedRepository.addFeed(link)
     }
 
     suspend fun deleteFeed(feed: Feed) {
