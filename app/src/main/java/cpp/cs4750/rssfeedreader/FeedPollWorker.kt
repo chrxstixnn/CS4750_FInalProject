@@ -8,8 +8,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import cpp.cs4750.rssfeedreader.repository.FeedRepository
-import cpp.cs4750.rssfeedreader.repository.PreferencesRepository
-import kotlinx.coroutines.flow.first
 
 class FeedPollWorker (
     private val context: Context,
@@ -17,37 +15,17 @@ class FeedPollWorker (
     ): CoroutineWorker(context, workerParameters){
 
     override suspend fun doWork(): Result {
-        val preferencesRepository = PreferencesRepository.get()
+        // TODO polling preference
+        // val preferencesRepository = PreferencesRepository.get()
         val feedRepository = FeedRepository(context)
 
+        val newFeeds = feedRepository.fetchNewItems()
 
-        val query = preferencesRepository.storedQuery.first()
-        val last = preferencesRepository.lastResult.first()
-
-        if(query.isEmpty()) {
-
+        if (newFeeds.isNotEmpty()) {
             sendNotification()
-            return Result.success()
         }
 
-        return try{
-
-            val feeds = feedRepository.getFeeds()
-
-            if(feeds != null){
-                val newLast = feeds.first().toString()
-
-                if(newLast == (last)){
-                    //nothing
-                }else{
-                    preferencesRepository.setLast(newLast.toString())
-                }
-            }
-            Result.success()
-        } catch(ex: Exception){
-            Result.failure()
-        }
-
+        return Result.success()
     }
 
     @SuppressLint("MissingPermission")
@@ -60,7 +38,7 @@ class FeedPollWorker (
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val resources = context.resources
+        // TODO use string.xml
 
         val notification = NotificationCompat
             .Builder(context, NOTIFICATION_CHANNEL_ID)
@@ -71,10 +49,7 @@ class FeedPollWorker (
             .setAutoCancel(true)
             .build()
 
-
         NotificationManagerCompat.from(context).notify(0, notification)
-
-
     }
 
 }
