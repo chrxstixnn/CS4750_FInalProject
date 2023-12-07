@@ -9,6 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
 import cpp.cs4750.rssfeedreader.databinding.FragmentItemDetailsBinding
+import org.jsoup.Jsoup
+import org.jsoup.safety.Safelist
 
 class ItemDetailsFragment : Fragment() {
     private var _binding: FragmentItemDetailsBinding? = null
@@ -41,7 +43,10 @@ class ItemDetailsFragment : Fragment() {
                     itemDetailTitle.text = it.title
                     itemDetailAuthor.text = it.author
                     itemDetailPublish.text = it.pubDate
-                    itemDetailContent.text = it.content
+
+                    val sanitizedContent = Jsoup.clean(it.content, Safelist.basicWithImages())
+
+                    itemDetailContent.loadData(sanitizedContent, "text/html", "UTF-8")
                 }
             }
         }
