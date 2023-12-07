@@ -28,9 +28,10 @@ class ItemListViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            feedRepository.fetchItems().collect {
+            feedRepository.getItems().collect {
                 _items.value = it
             }
+            feedRepository.fetchNewItems()
         }
     }
 
