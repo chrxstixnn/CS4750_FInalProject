@@ -14,6 +14,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
 import java.util.UUID
 
@@ -38,12 +40,14 @@ class FeedRepository private constructor (
 
     private val parser: RssParser = RssParser()
 
+    private val fetchItemsMutex = Mutex()
+
     suspend fun fetchItems(): Flow<List<Item>> {
         fetchNewItems()
         return getItems()
     }
     
-    suspend fun fetchNewItems(): List<Item> {
+    suspend fun fetchNewItems(): List<Item> = fetchItemsMutex.withLock {
         val feeds = getFeeds().first()
         val existingItems = getItems().first()
         val newItems = mutableListOf<Item>()
