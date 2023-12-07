@@ -3,11 +3,14 @@ package cpp.cs4750.rssfeedreader
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import cpp.cs4750.rssfeedreader.repository.FeedRepository
+
+private const val TAG = "FeedPollWorker"
 
 class FeedPollWorker (
     private val context: Context,
@@ -23,6 +26,7 @@ class FeedPollWorker (
 
         if (newFeeds.isNotEmpty()) {
             sendNotification()
+            Log.d(TAG, "")
         }
 
         return Result.success()
