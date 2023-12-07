@@ -11,11 +11,11 @@ import cpp.cs4750.rssfeedreader.database.migration_1_2
 import cpp.cs4750.rssfeedreader.model.Feed
 import cpp.cs4750.rssfeedreader.model.Item
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
 import java.util.UUID
 
@@ -40,12 +40,14 @@ class FeedRepository private constructor (
 
     private val parser: RssParser = RssParser()
 
+    private val fetchItemsMutex = Mutex()
+
     suspend fun fetchItems(): Flow<List<Item>> {
         fetchNewItems()
         return getItems()
     }
     
-    suspend fun fetchNewItems(): List<Item> {
+    suspend fun fetchNewItems(): List<Item> = fetchItemsMutex.withLock {
         val feeds = getFeeds().first()
         val existingItems = getItems().first()
         val newItems = mutableListOf<Item>()
@@ -78,7 +80,7 @@ class FeedRepository private constructor (
         return immutableNewItems
     }
 
-    suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
+    private suspend fun fetchItemsFromFeed(feed: Feed): List<Item> = feed.link?.let {
         val channel = parser.getRssChannel(it)
 
         Log.d(TAG, "Fetched ${channel.items.size} items from $it")
@@ -107,23 +109,11 @@ class FeedRepository private constructor (
         return feedDao.getFeeds()
     }
 
-    suspend fun addItems(items: List<Item>) = itemDao.addItems(items)
-
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
 
     suspend fun updateFeed(feed: Feed) = feedDao.updateFeed(feed)
 
     suspend fun deleteFeed(feed: Feed) = feedDao.deleteFeed(feed)
-
-    suspend fun deleteAllFeeds() {
-        withContext(Dispatchers.IO) {
-            feedDao.deleteAllFeeds()
-        }
-    }
-
-    suspend fun deleteAllItems() {
-        itemDao.deleteAll()
-    }
 
     companion object {
         private var INSTANCE: FeedRepository? = null
