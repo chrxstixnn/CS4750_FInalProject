@@ -22,7 +22,7 @@ import java.util.UUID
 private const val DATABASE_NAME = "feed-database"
 private const val TAG = "FeedRepository"
 
-class FeedRepository private constructor(
+class FeedRepository private constructor (
     context: Context,
     private val coroutineScope: CoroutineScope = GlobalScope
 ){
@@ -50,6 +50,9 @@ class FeedRepository private constructor(
         val existingItems = getItems().first()
         val newItems = mutableListOf<Item>()
 
+        if (existingItems.isEmpty())
+            Log.d(TAG, "No items in database!")
+
         // TODO more efficient algorithm
         for (feed in feeds) {
             val fetchedItems = fetchItemsFromFeed(feed)
@@ -60,8 +63,8 @@ class FeedRepository private constructor(
             }
 
             newItems.addAll(
-                existingItems.filter {
-                    !fetchedItems.contains(it)
+                fetchedItems.filter {
+                    !existingItems.contains(it)
                 }
             )
         }
