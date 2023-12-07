@@ -30,15 +30,6 @@ class ItemListAdapter(
     }
 
     override fun getItemCount() = items.size
-
-    // TODO use FeedDetailsFragment instead
-    fun openInAppBrowser(context: Context, url: String?) {
-        if (!url.isNullOrBlank()) {
-            val intent = Intent(context, WebViewActivity::class.java)
-            intent.putExtra(WebViewActivity.EXTRA_URL, url)
-            context.startActivity(intent)
-        }
-    }
 }
 
 class ItemViewHolder(
