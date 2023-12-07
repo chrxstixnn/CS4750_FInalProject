@@ -47,7 +47,6 @@ class ItemListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        pollingToggleButton = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
