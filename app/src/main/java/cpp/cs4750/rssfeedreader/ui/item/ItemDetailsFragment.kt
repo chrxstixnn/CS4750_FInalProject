@@ -49,7 +49,7 @@ class ItemDetailsFragment : Fragment() {
 
                     val sanitizedContent = Jsoup.clean(it.content, Safelist.basicWithImages())
 
-                    itemDetailContent.loadData(sanitizedContent, "text/html", "UTF-8")
+                    itemDetailContent.loadData("<style> img { height: auto; max-width: 100%; display: inline; } </style>$sanitizedContent", "text/html", "UTF-8")
                 }
             }
         }
