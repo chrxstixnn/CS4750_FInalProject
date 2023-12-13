@@ -35,9 +35,4 @@ class ItemListViewModel : ViewModel() {
         }
     }
 
-    // TODO preferences for polling
-    fun setQuery(query: String){
-        viewModelScope.launch { preferencesRepository.setStoredQuery(query) }
-    }
-
 }

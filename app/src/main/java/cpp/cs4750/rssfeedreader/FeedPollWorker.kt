@@ -18,8 +18,6 @@ class FeedPollWorker (
     ): CoroutineWorker(context, workerParameters){
 
     override suspend fun doWork(): Result {
-        // TODO polling preference
-        // val preferencesRepository = PreferencesRepository.get()
         val feedRepository = FeedRepository.get()
 
         val newFeeds = feedRepository.fetchNewItems()
@@ -41,8 +39,6 @@ class FeedPollWorker (
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-
-        // TODO use string.xml
 
         val notification = NotificationCompat
             .Builder(context, NOTIFICATION_CHANNEL_ID)
