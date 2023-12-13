@@ -56,8 +56,8 @@ class FeedListFragment : Fragment() {
             val url = binding.urlEditText.text.toString().trim()
             viewLifecycleOwner.lifecycleScope.launch {
                 if (url.isNotEmpty()) {
-                    feedListViewModel.addFeed(url)
                     binding.urlEditText.text.clear()
+                    feedListViewModel.addFeed(url)
                 }
             }
         }

@@ -26,4 +26,7 @@ interface FeedDao {
     @Delete
     suspend fun deleteFeed(feed: Feed)
 
+    @Query("SELECT EXISTS(SELECT * FROM Feed WHERE link=:link)")
+    suspend fun isLinkExist(link: String) : Boolean
+
 }

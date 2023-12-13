@@ -54,6 +54,7 @@ class FeedRepository private constructor (
     ).build()
 
     private val fetchItemsMutex = Mutex()
+    private val addFeedMutex = Mutex()
 
     suspend fun fetchItems(): Flow<List<Item>> {
         fetchNewItems()
@@ -127,7 +128,10 @@ class FeedRepository private constructor (
 
     suspend fun addFeed(feed: Feed) = feedDao.addFeed(feed)
 
-    suspend fun addFeed(link: String) {
+    suspend fun addFeed(link: String) = addFeedMutex.withLock {
+        if (feedDao.isLinkExist(link))
+            return
+
         val channel = parser.getRssChannel(link)
 
         val feed = Feed(
@@ -136,8 +140,8 @@ class FeedRepository private constructor (
             link
         )
 
-        itemDao.addItems(convertToDataModelItems(channel.items))
         addFeed(feed)
+        itemDao.addItems(convertToDataModelItems(channel.items))
     }
 
     suspend fun updateFeed(feed: Feed) = feedDao.updateFeed(feed)
