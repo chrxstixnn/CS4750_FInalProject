@@ -32,8 +32,10 @@ class FeedListAdapter(
     inner class FeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val feedTextView: TextView = itemView.findViewById(R.id.feedTextView)
         private val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
+        private val feedTitleTextView: TextView = itemView.findViewById(R.id.feedTitle)
 
         fun bind(feed: Feed) {
+            feedTitleTextView.text = feed.title?.ifEmpty { "Feed" } ?: "Feed"
             feedTextView.text = feed.link
 
             deleteButton.setOnClickListener {
