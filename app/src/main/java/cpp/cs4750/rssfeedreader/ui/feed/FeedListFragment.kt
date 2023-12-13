@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cpp.cs4750.rssfeedreader.databinding.FragmentFeedListBinding
 import cpp.cs4750.rssfeedreader.model.Feed
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class FeedListFragment : Fragment() {
 
@@ -57,7 +59,12 @@ class FeedListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 if (url.isNotEmpty()) {
                     binding.urlEditText.text.clear()
-                    feedListViewModel.addFeed(url)
+
+                    try {
+                        feedListViewModel.addFeed(url)
+                    } catch (ex: Exception) {
+                        Toast.makeText(this@FeedListFragment.requireContext(), "Failed to add the feed $url!", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
